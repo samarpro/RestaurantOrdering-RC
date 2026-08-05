@@ -1,31 +1,29 @@
 {
-  "name": "restaurant-order-processor",
-  "version": "0.1.0",
-  "private": true,
-  "description": "A restaurant ordering service with web and command-line interfaces.",
-  "type": "module",
-  "engines": {
-    "node": ">=22.18.0"
+  "name": "redcat",
+  "version": "1.0.0",
+  "description": "Order Processing for Restaurants",
+  "keywords": [
+    "Hospitality"
+  ],
+  "homepage": "https://github.com/samarpro/RestaurantOrdering-RC#readme",
+  "bugs": {
+    "url": "https://github.com/samarpro/RestaurantOrdering-RC/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samarpro/RestaurantOrdering-RC.git"
+  },
+  "license": "ISC",
+  "author": "Sam Kanu",
+  "type": "commonjs",
+  "main": "index.js",
   "scripts": {
-    "build": "npm run check && npm run build:css",
-    "build:css": "npx @tailwindcss/cli -i ./src/web/styles.css -o ./public/assets/styles.css --minify",
-    "check": "tsc --noEmit",
-    "dev": "node --watch src/server.ts",
-    "dev:css": "npx @tailwindcss/cli -i ./src/web/styles.css -o ./public/assets/styles.css --watch",
-    "start": "node src/server.ts",
-    "test": "node --test \"tests/**/*.test.ts\""
-  },
-  "dependencies": {
-    "@inquirer/prompts": "^8.5.2",
-    "express": "^5.2.1",
-    "zod": "^4.4.3"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.3.3",
-    "@types/express": "^5.0.6",
     "@types/node": "^26.1.2",
-    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.8",
     "typescript": "^7.0.2"
   }
 }
