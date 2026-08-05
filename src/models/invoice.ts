@@ -1,7 +1,7 @@
-import type { Item } from "./item.ts";
-
 export interface InvoiceLine {
-  readonly item: Item;
+  readonly productId: string;
+  readonly productName: string;
+  readonly unitPriceCents: number;
   readonly quantity: number;
   readonly subtotalCents: number;
 }
