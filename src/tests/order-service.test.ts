@@ -5,7 +5,7 @@ import type { Menu } from "../models/index.js";
 import {
   calculateIncludedGstCents,
   processOrder,
-} from "./order-service.js";
+} from "../services/order-service.js";
 
 const menu: Menu = {
   id: "main",
@@ -15,13 +15,13 @@ const menu: Menu = {
       id: "cheeseburger",
       name: "Cheeseburger",
       category: "burger",
-      unitPriceCents: 1_500,
+      unitPriceCents: 1500,
     },
     {
       id: "chicken-burger",
       name: "Chicken burger",
       category: "burger",
-      unitPriceCents: 2_000,
+      unitPriceCents: 2000,
     },
     {
       id: "large-soft-drink",
@@ -50,9 +50,9 @@ describe("processOrder", () => {
         {
           productId: "cheeseburger",
           description: "Cheeseburger",
-          unitPriceCents: 1_500,
+          unitPriceCents: 1500,
           quantity: 2,
-          subtotalCents: 3_000,
+          subtotalCents: 3000,
         },
         {
           productId: "large-soft-drink",
