@@ -1,23 +1,19 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 import { RestaurantOrderController } from "../controllers/index.js";
-import type { Menu } from "../models/index.js";
+import { getRestaurant } from "../services/index.js";
 
-const menu = JSON.parse(
-  readFileSync(new URL("../data/menu.json", import.meta.url), "utf8"),
-) as Menu;
+const restaurant = getRestaurant();
 
 describe("RestaurantOrderController", () => {
-  const controller = new RestaurantOrderController(menu);
+  const controller = new RestaurantOrderController(restaurant);
 
-  it("exposes the restaurant menu", () => {
-    assert.deepEqual(controller.getMenu(), menu);
-    assert.equal(controller.getMenu().products.length, 4);
+  it("exposes restaurant operations data", () => {
+    assert.deepEqual(controller.getRestaurant(), restaurant);
   });
 
-  it("processes an order through the service boundary", () => {
+  it("processes an order using the restaurant GST configuration", () => {
     const invoice = controller.processOrder({
       items: [
         { productId: "cheeseburger", quantity: 2 },

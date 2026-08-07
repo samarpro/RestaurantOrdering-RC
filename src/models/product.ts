@@ -1,4 +1,4 @@
-export type ProductCategory = "burger" | "soft-drink";
+export type ProductCategory = string;
 
 export interface Product {
   readonly id: string;

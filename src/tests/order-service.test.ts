@@ -7,6 +7,10 @@ import { processOrder } from "../services/index.js";
 const menu: Menu = {
   id: "main",
   name: "Main menu",
+  categories: [
+    { id: "burger", name: "Burgers", icon: "🍔" },
+    { id: "soft-drink", name: "Soft drinks", icon: "🥤" },
+  ],
   products: [
     {
       id: "cheeseburger",
@@ -40,6 +44,7 @@ describe("processOrder", () => {
         ],
       },
       menu,
+      10,
     );
 
     assert.deepEqual(invoice, {
@@ -64,8 +69,18 @@ describe("processOrder", () => {
     });
   });
 
+  it("uses the configured GST rate", () => {
+    const invoice = processOrder(
+      { items: [{ productId: "cheeseburger", quantity: 1 }] },
+      menu,
+      20,
+    );
+
+    assert.equal(invoice.includedGstCents, 250);
+  });
+
   it("returns a zero-value invoice for an empty order", () => {
-    assert.deepEqual(processOrder({ items: [] }, menu), {
+    assert.deepEqual(processOrder({ items: [] }, menu, 10), {
       lines: [],
       totalCents: 0,
       includedGstCents: 0,
@@ -74,7 +89,7 @@ describe("processOrder", () => {
 
   it("rejects products that are not on the menu", () => {
     assert.throws(
-      () => processOrder({ items: [{ productId: "unknown", quantity: 1 }] }, menu),
+      () => processOrder({ items: [{ productId: "unknown", quantity: 1 }] }, menu, 10),
       /not on the menu/,
     );
   });
@@ -82,7 +97,7 @@ describe("processOrder", () => {
   it("rejects non-positive or fractional quantities", () => {
     for (const quantity of [0, -1, 1.5]) {
       assert.throws(
-        () => processOrder({ items: [{ productId: "cheeseburger", quantity }] }, menu),
+        () => processOrder({ items: [{ productId: "cheeseburger", quantity }] }, menu, 10),
         /positive integer/,
       );
     }

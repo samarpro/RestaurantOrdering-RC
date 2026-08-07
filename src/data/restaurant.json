@@ -1,0 +1,56 @@
+{
+  "id": "counter",
+  "name": "Counter",
+  "tax": {
+    "name": "GST",
+    "ratePercent": 10,
+    "pricesInclusive": true
+  },
+  "menu": {
+    "id": "main",
+    "name": "Restaurant Menu",
+    "categories": [
+      {
+        "id": "burger",
+        "name": "Burgers",
+        "icon": "🍔"
+      },
+      {
+        "id": "soft-drink",
+        "name": "Soft drinks",
+        "icon": "🥤"
+      },
+      {
+        "id": "fries",
+        "name": "Fries",
+        "icon": "🍟"
+      }
+    ],
+    "products": [
+      {
+        "id": "cheeseburger",
+        "name": "Cheeseburger",
+        "category": "burger",
+        "unitPriceCents": 1500
+      },
+      {
+        "id": "chicken-burger",
+        "name": "Chicken burger",
+        "category": "burger",
+        "unitPriceCents": 2000
+      },
+      {
+        "id": "small-soft-drink",
+        "name": "Soft drink (Small)",
+        "category": "soft-drink",
+        "unitPriceCents": 400
+      },
+      {
+        "id": "large-soft-drink",
+        "name": "Soft drink (Large)",
+        "category": "soft-drink",
+        "unitPriceCents": 500
+      }
+    ]
+  }
+}

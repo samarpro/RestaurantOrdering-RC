@@ -52,27 +52,33 @@ function calculateTotalCents(lines: readonly InvoiceLine[]): number {
   return lines.reduce((total, line) => total + line.subtotalCents, 0);
 }
 
-/**
- * Extracts the GST component from a GST-inclusive total using total / 11.
- */
-function calculateIncludedGstCents(totalCents: number): number {
+/** Extracts the tax component from a tax-inclusive total. */
+function calculateIncludedTaxCents(totalCents: number, taxRatePercent: number): number {
   if (!Number.isInteger(totalCents) || totalCents < 0) {
     throw new RangeError("Total must be a non-negative integer number of cents");
   }
 
-  return Math.round(totalCents / 11);
+  if (!Number.isFinite(taxRatePercent) || taxRatePercent < 0) {
+    throw new RangeError("Tax rate must be a non-negative finite percentage");
+  }
+
+  return Math.round((totalCents * taxRatePercent) / (100 + taxRatePercent));
 }
 
 /**
  * Processes an order against the supplied menu and returns its invoice.
  */
-export function processOrder(input: PlaceOrderInput, menu: Menu): Invoice {
+export function processOrder(
+  input: PlaceOrderInput,
+  menu: Menu,
+  gstRatePercent: number,
+): Invoice {
   const lines = calculateInvoiceLines(input.items, menu.products);
   const totalCents = calculateTotalCents(lines);
 
   return {
     lines,
     totalCents,
-    includedGstCents: calculateIncludedGstCents(totalCents),
+    includedGstCents: calculateIncludedTaxCents(totalCents, gstRatePercent),
   };
 }
