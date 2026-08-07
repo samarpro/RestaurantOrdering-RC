@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 import { createRestaurantOrderController } from "../controllers/index.js";
 import {
   buildMenuTable,
-  buildReceiptTable,
+  formatReceipt,
 } from "../views/cli/table-formatters.js";
 
 const controller = createRestaurantOrderController();
@@ -22,7 +22,7 @@ describe("CLI table formatters", () => {
     });
   });
 
-  it("builds itemised receipt rows", () => {
+  it("formats the receipt using the required output", () => {
     const invoice = controller.processOrder({
       items: [
         { productId: "cheeseburger", quantity: 2 },
@@ -30,19 +30,15 @@ describe("CLI table formatters", () => {
       ],
     });
 
-    assert.deepEqual(buildReceiptTable(invoice), [
-      {
-        Product: "Cheeseburger",
-        Quantity: 2,
-        "Unit price": "$15",
-        Subtotal: "$30",
-      },
-      {
-        Product: "Soft drink (Large)",
-        Quantity: 1,
-        "Unit price": "$5",
-        Subtotal: "$5",
-      },
-    ]);
+    assert.equal(
+      formatReceipt(invoice, "GST"),
+      [
+        "Cheeseburger x 2 $30",
+        "Soft drink (Large) x 1 $5",
+        "",
+        "Total $35",
+        "Including GST ($3.18)",
+      ].join("\n"),
+    );
   });
 });

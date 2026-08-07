@@ -7,13 +7,6 @@ export interface MenuTableRow {
   readonly Price: string;
 }
 
-export interface ReceiptTableRow {
-  readonly Product: string;
-  readonly Quantity: number;
-  readonly "Unit price": string;
-  readonly Subtotal: string;
-}
-
 export function buildMenuTable(restaurant: Restaurant): MenuTableRow[] {
   const categoriesById = new Map(
     restaurant.menu.categories.map((category) => [category.id, category]),
@@ -30,11 +23,15 @@ export function buildMenuTable(restaurant: Restaurant): MenuTableRow[] {
   });
 }
 
-export function buildReceiptTable(invoice: Invoice): ReceiptTableRow[] {
-  return invoice.lines.map((line) => ({
-    Product: line.description,
-    Quantity: line.quantity,
-    "Unit price": formatCurrency(line.unitPriceCents),
-    Subtotal: formatCurrency(line.subtotalCents),
-  }));
+export function formatReceipt(invoice: Invoice, taxName: string): string {
+  const lines = invoice.lines.map(
+    (line) => `${line.description} x ${line.quantity} ${formatCurrency(line.subtotalCents)}`,
+  );
+
+  return [
+    ...lines,
+    "",
+    `Total ${formatCurrency(invoice.totalCents)}`,
+    `Including ${taxName} (${formatCurrency(invoice.includedGstCents)})`,
+  ].join("\n");
 }

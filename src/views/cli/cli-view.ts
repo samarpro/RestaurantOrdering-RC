@@ -3,7 +3,7 @@ import { checkbox, confirm, number as numberPrompt } from "@inquirer/prompts";
 import type { OrderingController } from "../../controllers/index.js";
 import type { PlaceOrderInput, Product, Restaurant } from "../../models/index.js";
 import { formatCurrency } from "../shared/currency.js";
-import { buildMenuTable, buildReceiptTable } from "./table-formatters.js";
+import { buildMenuTable, formatReceipt } from "./table-formatters.js";
 
 function printHeader(restaurant: Restaurant): void {
   console.log(`\n🍽️  ${restaurant.name}`);
@@ -57,12 +57,7 @@ function printReceipt(controller: OrderingController, input: PlaceOrderInput): v
   const restaurant = controller.getRestaurant();
   const invoice = controller.processOrder(input);
 
-  console.log("\nRECEIPT");
-  console.table(buildReceiptTable(invoice));
-  console.log(`Total: ${formatCurrency(invoice.totalCents)}`);
-  console.log(
-    `Including ${restaurant.tax.name} (${restaurant.tax.ratePercent}%): ${formatCurrency(invoice.includedGstCents)}\n`,
-  );
+  console.log(`\n${formatReceipt(invoice, restaurant.tax.name)}\n`);
 }
 
 export async function runCliView(controller: OrderingController): Promise<void> {
