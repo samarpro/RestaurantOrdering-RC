@@ -1,11 +1,6 @@
 import type { OrderingController } from "../../controllers/index.js";
-import type { Invoice, PlaceOrderInput, Product, ProductCategory } from "../../models/index.js";
+import type { Invoice, PlaceOrderInput, Product } from "../../models/index.js";
 import { formatCurrency } from "../shared/currency.js";
-
-const categoryLabels: Record<ProductCategory, string> = {
-  burger: "Burgers",
-  "soft-drink": "Soft drinks",
-};
 
 function requireElement<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
@@ -32,10 +27,6 @@ function createElement<K extends keyof HTMLElementTagNameMap>(
   return element;
 }
 
-function productIcon(product: Product): string {
-  return product.category === "burger" ? "🍔" : "🥤";
-}
-
 function toOrderInput(quantities: ReadonlyMap<string, number>): PlaceOrderInput {
   return {
     items: Array.from(quantities, ([productId, quantity]) => ({ productId, quantity })),
@@ -43,10 +34,14 @@ function toOrderInput(quantities: ReadonlyMap<string, number>): PlaceOrderInput 
 }
 
 export function initialiseWebView(controller: OrderingController): void {
+  const restaurant = controller.getRestaurant();
+  const { menu, tax } = restaurant;
   const menuElement = requireElement<HTMLDivElement>("menu");
   const emptyOrderElement = requireElement<HTMLDivElement>("empty-order");
   const selectedItemsElement = requireElement<HTMLDivElement>("selected-items");
   const estimatedTotalElement = requireElement<HTMLElement>("estimated-total");
+  const estimatedGstElement = requireElement<HTMLElement>("estimated-gst");
+  const estimatedGstLabelElement = requireElement<HTMLElement>("estimated-gst-label");
   const processButton = requireElement<HTMLButtonElement>("process-order");
   const clearButton = requireElement<HTMLButtonElement>("clear-order");
   const errorElement = requireElement<HTMLParagraphElement>("order-error");
@@ -54,6 +49,14 @@ export function initialiseWebView(controller: OrderingController): void {
   const receiptLinesElement = requireElement<HTMLDivElement>("receipt-lines");
   const receiptTotalElement = requireElement<HTMLElement>("receipt-total");
   const receiptGstElement = requireElement<HTMLElement>("receipt-gst");
+  const receiptGstLabelElement = requireElement<HTMLElement>("receipt-gst-label");
+  const restaurantNameElement = requireElement<HTMLElement>("restaurant-name");
+  const taxDisclosureElement = requireElement<HTMLElement>("tax-disclosure");
+
+  restaurantNameElement.textContent = restaurant.name;
+  estimatedGstLabelElement.textContent = `Including ${tax.name} (${tax.ratePercent}%)`;
+  receiptGstLabelElement.textContent = `Including ${tax.name} (${tax.ratePercent}%)`;
+  taxDisclosureElement.textContent = `Prices include ${tax.ratePercent}% ${tax.name}.`;
 
   const quantities = new Map<string, number>();
   const quantityLabels = new Map<string, HTMLOutputElement>();
@@ -93,6 +96,7 @@ export function initialiseWebView(controller: OrderingController): void {
       selectedItemsElement.replaceChildren();
 
       if (invoice === undefined) {
+        estimatedGstElement.textContent = formatCurrency(0);
         estimatedTotalElement.textContent = formatCurrency(0);
         return;
       }
@@ -115,6 +119,7 @@ export function initialiseWebView(controller: OrderingController): void {
         selectedItemsElement.append(row);
       }
 
+      estimatedGstElement.textContent = formatCurrency(invoice.includedGstCents);
       estimatedTotalElement.textContent = formatCurrency(invoice.totalCents);
     } catch (error) {
       showError(error);
@@ -138,19 +143,19 @@ export function initialiseWebView(controller: OrderingController): void {
     renderOrderSummary();
   }
 
-  function createProductCard(product: Product): HTMLElement {
+  function createProductCard(product: Product, categoryIcon: string): HTMLElement {
     const card = createElement(
       "article",
       "group rounded-2xl border border-white/10 bg-stone-900/70 p-5 transition hover:-translate-y-0.5 hover:border-orange-400/40 hover:bg-stone-900 hover:shadow-xl hover:shadow-black/20",
     );
     const topRow = createElement("div", "flex items-start justify-between gap-4");
     const identity = createElement("div", "flex min-w-0 items-center gap-4");
-    identity.append(createElement("span", "grid size-14 shrink-0 place-items-center rounded-2xl bg-white/5 text-3xl", productIcon(product)));
+    identity.append(createElement("span", "grid size-14 shrink-0 place-items-center rounded-2xl bg-white/5 text-3xl", categoryIcon));
 
     const title = createElement("div", "min-w-0");
     title.append(
       createElement("h3", "truncate text-lg font-bold text-white", product.name),
-      createElement("p", "mt-1 text-sm text-stone-500", "GST included"),
+      createElement("p", "mt-1 text-sm text-stone-500", `${tax.name} included`),
     );
     identity.append(title);
     topRow.append(identity, createElement("span", "shrink-0 text-lg font-black text-orange-400", formatCurrency(product.unitPriceCents)));
@@ -180,19 +185,25 @@ export function initialiseWebView(controller: OrderingController): void {
   }
 
   function renderMenu(): void {
-    const products = controller.getMenu().products;
+    for (const category of menu.categories) {
+      const categoryProducts = menu.products.filter(
+        (product) => product.category === category.id,
+      );
 
-    for (const category of ["burger", "soft-drink"] as const) {
+      if (categoryProducts.length === 0) {
+        continue;
+      }
+
       const section = createElement("section", "space-y-4");
       const heading = createElement("div", "flex items-center gap-3");
       heading.append(
-        createElement("h2", "text-xl font-bold text-white", categoryLabels[category]),
+        createElement("h2", "text-xl font-bold text-white", category.name),
         createElement("span", "h-px flex-1 bg-white/10"),
       );
 
       const grid = createElement("div", "grid gap-4 sm:grid-cols-2");
-      for (const product of products.filter((item) => item.category === category)) {
-        grid.append(createProductCard(product));
+      for (const product of categoryProducts) {
+        grid.append(createProductCard(product, category.icon));
       }
 
       section.append(heading, grid);
