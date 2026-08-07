@@ -23,7 +23,7 @@
     "dev:web": "vite --config vite.config.ts",
     "build:web": "vite build --config vite.config.ts",
     "preview:web": "vite preview --config vite.config.ts",
-    "start:cli": "tsx src/views/cli/main.ts"
+    "dev:cli": "tsx src/views/cli/main.ts"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
