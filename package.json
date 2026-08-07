@@ -19,11 +19,17 @@
   "main": "index.js",
   "scripts": {
     "test": "node --import tsx --test src/**/*.test.ts",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "dev:web": "vite --config vite.config.ts",
+    "build:web": "vite build --config vite.config.ts",
+    "preview:web": "vite preview --config vite.config.ts"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.1.2",
+    "tailwindcss": "^4.3.3",
     "tsx": "^4.23.8",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1"
   }
 }
