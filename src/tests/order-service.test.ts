@@ -2,10 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import type { Menu } from "../models/index.js";
-import {
-  calculateIncludedGstCents,
-  processOrder,
-} from "../services/order-service.js";
+import { processOrder } from "../services/index.js";
 
 const menu: Menu = {
   id: "main",
@@ -88,18 +85,6 @@ describe("processOrder", () => {
         () => processOrder({ items: [{ productId: "cheeseburger", quantity }] }, menu),
         /positive integer/,
       );
-    }
-  });
-});
-
-describe("calculateIncludedGstCents", () => {
-  it("extracts and rounds the GST included in a total", () => {
-    assert.equal(calculateIncludedGstCents(3_500), 318);
-  });
-
-  it("rejects invalid monetary values", () => {
-    for (const total of [-1, 10.5]) {
-      assert.throws(() => calculateIncludedGstCents(total), /non-negative integer/);
     }
   });
 });

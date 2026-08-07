@@ -10,7 +10,7 @@ import type {
 /**
  * Combines repeated products and calculates each line subtotal.
  */
-export function calculateInvoiceLines(
+function calculateInvoiceLines(
   items: readonly OrderItemInput[],
   products: readonly Product[],
 ): InvoiceLine[] {
@@ -48,14 +48,14 @@ export function calculateInvoiceLines(
   });
 }
 
-export function calculateTotalCents(lines: readonly InvoiceLine[]): number {
+function calculateTotalCents(lines: readonly InvoiceLine[]): number {
   return lines.reduce((total, line) => total + line.subtotalCents, 0);
 }
 
 /**
  * Extracts the GST component from a GST-inclusive total using total / 11.
  */
-export function calculateIncludedGstCents(totalCents: number): number {
+function calculateIncludedGstCents(totalCents: number): number {
   if (!Number.isInteger(totalCents) || totalCents < 0) {
     throw new RangeError("Total must be a non-negative integer number of cents");
   }
