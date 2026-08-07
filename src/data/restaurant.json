@@ -50,18 +50,6 @@
         "name": "Soft drink (Large)",
         "category": "soft-drink",
         "unitPriceCents": 500
-      },
-      {
-        "id": "small-fries",
-        "name": "Fries (Small)",
-        "category": "fries",
-        "unitPriceCents": 500
-      },
-      {
-        "id": "large-fries",
-        "name": "Fries (Large)",
-        "category": "fries",
-        "unitPriceCents": 700
       }
     ]
   }

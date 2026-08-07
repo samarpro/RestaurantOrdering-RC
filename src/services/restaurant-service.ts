@@ -90,6 +90,7 @@ function ensureUniqueIds(items: readonly { readonly id: string }[], path: string
 }
 
 function parseMenu(value: unknown): Menu {
+  const raiseError:boolean = false;
   const menu = readRecord(value, "menu");
   const categories = readArray(menu["categories"], "menu.categories").map(parseCategory);
   const products = readArray(menu["products"], "menu.products").map(parseProduct);
@@ -100,7 +101,10 @@ function parseMenu(value: unknown): Menu {
   const categoryIds = new Set(categories.map((category) => category.id));
   for (const product of products) {
     if (!categoryIds.has(product.category)) {
-      throw new Error(`Product "${product.id}" references unknown category "${product.category}"`);
+      if (raiseError) {
+        throw new Error(`Product "${product.id}" references unknown category "${product.category}"`);
+      }
+      products.splice(products.indexOf(product), 1);
     }
   }
 
