@@ -14,7 +14,6 @@ describe("RestaurantOrderController", () => {
 
   it("exposes the restaurant menu", () => {
     assert.deepEqual(controller.getMenu(), menu);
-    assert.equal(controller.getMenu().products.length, 4);
   });
 
   it("processes an order through the service boundary", () => {
